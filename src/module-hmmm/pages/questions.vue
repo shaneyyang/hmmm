@@ -34,13 +34,13 @@
 </el-row>
   <el-row :gutter="20">
   <el-col :span="6">城市：
-    <el-select v-model="searchForm.city" placeholder="请选择" clearable style="width:90px;">
-      <el-option v-for="item in subjectList" :key="item.value" :label="item.label" :value="item.value">
+    <el-select v-model="searchForm.province" placeholder="请选择" clearable style="width:90px;" @change="searchForm.city=''">
+      <el-option v-for="item in provinces()" :key="item" :label="item" :value="item">
 
       </el-option>
     </el-select>
-     <el-select v-model="searchForm.province" placeholder="请选择" clearable style="width:90px;">
-      <el-option v-for="item in subjectList" :key="item.value" :label="item.label" :value="item.value">
+     <el-select v-model="searchForm.city" placeholder="请选择" clearable style="width:90px;">
+      <el-option v-for="item in citys(searchForm.province)" :key="item" :label="item" :value="item">
 
       </el-option>
     </el-select>
@@ -73,7 +73,7 @@
   </el-col>
   <el-col :span="6">二级目录：
     <el-select v-model="searchForm.catalogID" placeholder="请选择" clearable class="wd">
-      <el-option v-for="item in subjectList" :key="item.value" :label="item.label" :value="item.value">
+      <el-option v-for="item in catalogIDList" :key="item.value" :label="item.label" :value="item.value">
 
       </el-option>
     </el-select>
@@ -103,8 +103,14 @@ import {simple as tagsSimple} from '@/api/hmmm/tags'
 // 导入录入人api
 import {simple as usersSimple} from '@/api/base/users'
 
+// 二级目录列表
+import {simple as directorysSimple} from '@/api/hmmm/directorys'
 // 方向列表api
 import {direction as directionList} from '@/api/hmmm/constants'
+
+// 引入城市列表
+import {provinces, citys} from '@/api/hmmm/citys'
+
 export default {
   name: 'QuestionsList',
   data() {
@@ -135,8 +141,12 @@ export default {
       tagsList: [],
       // 录入人列表
       usersList: [],
+      // 二级目录列表
+      catalogIDList: [],
       // 方向列表
-      directionList
+      directionList,
+      // 县区列表
+      cityList: []
     }
   },
   created() {
@@ -146,6 +156,8 @@ export default {
     this.getTagsList()
     // 获取录入人列表
     this.getUsersList()
+    // 获取二级目录列表
+   this.getCatalogIDList()
   },
   methods: {
     // 获取学科简单列表
@@ -165,7 +177,16 @@ export default {
     console.log(result)
     
     this.usersList = result.data
-  }
+  },
+  // 获取二级目录列表
+  async getCatalogIDList() {
+    var result = await directorysSimple()
+    this.catalogIDList = result.data
+  },
+  // 由于省份(实际是城市)引入的是一个函数，所以在methods中接收这个函数
+  provinces,
+  // 接收城市(而实际上应该是县区)
+  citys
   }
   
 }
