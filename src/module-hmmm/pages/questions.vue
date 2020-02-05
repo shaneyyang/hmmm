@@ -25,7 +25,7 @@
   </el-col>
   <el-col :span="6">标&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;签：
    <el-select v-model="searchForm.tags" placeholder="请选择" clearable class="wd">
-      <el-option v-for="item in subjectList" :key="item.value" :label="item.label" :value="item.value">
+      <el-option v-for="item in tagsList" :key="item.value" :label="item.label" :value="item.value">
 
       </el-option>
     </el-select>
@@ -61,14 +61,14 @@
   <el-row :gutter="20">
   <el-col :span="6">方向：
     <el-select v-model="searchForm.direction" placeholder="请选择" clearable class="wd">
-      <el-option v-for="item in subjectList" :key="item.value" :label="item.label" :value="item.value">
+      <el-option v-for="item in directionList" :key="item" :label="item" :value="item">
 
       </el-option>
     </el-select>
   </el-col>
   <el-col :span="6">录入人：
     <el-select v-model="searchForm.creatorID" placeholder="请选择" clearable class="wd">
-      <el-option v-for="item in difficultyList" :key="item.value" :value="item.value" :label="item.label"></el-option>
+      <el-option v-for="item in usersList" :key="item.id" :value="item.id" :label="item.username"></el-option>
     </el-select>
   </el-col>
   <el-col :span="6">二级目录：
@@ -97,11 +97,21 @@ import {simple} from '@/api/hmmm/subjects.js'
 import {difficulty as difficultyList,
 questionType as questionList} from '@/api/hmmm/constants.js'
 
+// 导入标签列表api
+import {simple as tagsSimple} from '@/api/hmmm/tags'
+
+// 导入录入人api
+import {simple as usersSimple} from '@/api/base/users'
+
+// 方向列表api
+import {direction as directionList} from '@/api/hmmm/constants'
 export default {
   name: 'QuestionsList',
   data() {
     return {
+      // 学科列表
       subjectList: [],
+      
       searchForm: {
         subjectID: '',
         difficulty: '',
@@ -117,23 +127,47 @@ export default {
         catalogID: ''
 
       },
+      // 难度列表
       difficultyList,
-      questionList
+      // 试题类型列表
+      questionList,
+      // 标签列表
+      tagsList: [],
+      // 录入人列表
+      usersList: [],
+      // 方向列表
+      directionList
     }
   },
   created() {
     // 获取学科简单列表
     this.getSubjectList()
+    // 获取标签列表
+    this.getTagsList()
+    // 获取录入人列表
+    this.getUsersList()
   },
   methods: {
     // 获取学科简单列表
     async getSubjectList() {
       let result = await simple()
-
-      this.subjectList = result.data
-      
-    }
+      this.subjectList = result.data      
+    },
+    // 获取标签列表
+  async getTagsList() {
+    var result = await tagsSimple()
+    this.tagsList = result.data
+    
+  },
+  // 获取录入人列表
+  async getUsersList() {
+    var result = await usersSimple()
+    console.log(result)
+    
+    this.usersList = result.data
   }
+  }
+  
 }
 </script>
 
