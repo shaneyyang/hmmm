@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="app-container">题库添加</div>
+    <div class="app-container">题库添加demo</div>
   </div>
 </template>
 
