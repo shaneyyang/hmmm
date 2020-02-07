@@ -117,6 +117,16 @@
 
   </el-table-column>
 </el-table>
+
+<el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="searchForm.page"
+      :page-sizes="[3, 5, 10, 20]"
+      :page-size="searchForm.pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="tot">
+    </el-pagination>
 </el-card>
     </div>
 
@@ -169,9 +179,12 @@ export default {
         shortName: '',
         direction: '',
         creatorID: '',
-        catalogID: ''
-
+        catalogID: '',
+        page: 1,
+        pagesize: 3
+     
       },
+      tot: 0,
       // 难度列表
       difficultyList,
       // 试题类型列表
@@ -203,6 +216,12 @@ export default {
   this.getQuestionsList()
   },
   methods: {
+    handleSizeChange(val) {
+      this.searchForm.pagesize = val
+    },
+    handleCurrentChange(val) {
+      this.searchForm.page = val
+    },
     // 删除试题
     del(question) {
   // 确认框
@@ -249,9 +268,10 @@ export default {
   citys,
   // 接收基础题库数据列表
   async getQuestionsList() {
-    var result = await list()
+    var result = await list(this.searchForm)
     this.questionsList = result.data.items
-    console.log(this.questionsList)
+    this.tot = result.data.counts
+    // console.log(result)
     
   },
   // 数字转换试题类型
@@ -286,5 +306,8 @@ export default {
 }
 .el-table {
  margin-top: 25px;
+}
+.el-pagination{
+  margin-top:15px;
 }
 </style>
