@@ -61,7 +61,7 @@
   <el-form-item label="题干：">
   <el-input type="textarea" v-model="addForm.question"></el-input>
 </el-form-item>
-  <el-form-item label="选项：">
+  <el-form-item label="选项：" v-if="addForm.questionType === '1'">
  <el-radio v-model="selectSingle" :label="0">A.
 <el-input v-model="addForm.options[0].title"></el-input>
  </el-radio><br/>
@@ -76,6 +76,26 @@
  </el-radio>
 
 </el-form-item>
+  <el-form-item label="选项：" v-if="addForm.questionType === '2'">
+    <el-checkbox v-model="addForm.options[0].isRight">A.
+      <el-input type="text" v-model="addForm.options[0].title"></el-input>
+    </el-checkbox>
+    <br>
+    <el-checkbox v-model="addForm.options[1].isRight">B.
+      <el-input type="text" v-model="addForm.options[1].title"></el-input>
+    </el-checkbox>
+    <br>
+    <el-checkbox v-model="addForm.options[2].isRight">C.
+      <el-input type="text" v-model="addForm.options[2].title"></el-input>
+    </el-checkbox>
+    <br>
+    <el-checkbox v-model="addForm.options[3].isRight">D.
+      <el-input type="text" v-model="addForm.options[3].title"></el-input>
+    </el-checkbox>
+</el-form-item>
+<template v-if="addForm.questionType==='3'">
+
+</template>
 
 <el-form-item label="答案：">
   <el-input type="textarea" v-model="addForm.answer"></el-input>
@@ -122,7 +142,7 @@ export default {
   name: 'QuestionsNew',
   data() {
     return {
-      selectSingle: '', // 选项
+      selectSingle: '', // 单选项
       addForm: {
         
         number: '', // 试题编号
@@ -157,12 +177,14 @@ export default {
     }
   },
   watch: {
+    // 单选项
     selectSingle(newV) {
       for (var i = 0; i < 4; i++) {
         this.addForm.options[i].isRight = false
       }
       this.addForm.options[newV].isRight = true
     }
+
   },
   created() {
     // 获取学科简单列表
