@@ -48,7 +48,49 @@
       </el-option>
     </el-select>
   </el-form-item>
+  <el-form-item label="题型：">
+      <el-radio-group v-model="addForm.questionType">
+    <el-radio v-for="item in questionTypeList" :label="item.value+''" :key="item.value">{{item.label}}</el-radio>
+  </el-radio-group>
+  </el-form-item>
+  <el-form-item label="难度：">
+      <el-radio-group v-model="addForm.difficulty">
+    <el-radio v-for="item in difficultyList" :label="item.value+''" :key="item.value">{{item.label}}</el-radio>
+  </el-radio-group>
+  </el-form-item>
+  <el-form-item label="题干：">
+  <el-input type="textarea" v-model="addForm.question"></el-input>
+</el-form-item>
+  <el-form-item label="选项：">
+ <el-radio v-model="selectSingle" :label="0">A.
+<el-input v-model="addForm.options[0].title"></el-input>
+ </el-radio><br/>
+ <el-radio v-model="selectSingle" :label="1">B.
+<el-input v-model="addForm.options[1].title"></el-input>
+ </el-radio><br/>
+ <el-radio v-model="selectSingle" :label="2">C.
+<el-input v-model="addForm.options[2].title"></el-input>
+ </el-radio><br/>
+ <el-radio v-model="selectSingle" :label="3">D.
+<el-input v-model="addForm.options[3].title"></el-input>
+ </el-radio>
+
+</el-form-item>
+
+<el-form-item label="答案：">
+  <el-input type="textarea" v-model="addForm.answer"></el-input>
+</el-form-item>
+<el-form-item label="备注：">
+  <el-input type="textarea" v-model="addForm.remarks"></el-input>
+</el-form-item>
+<el-form-item label="标签：">
+  <el-input type="text" v-model="addForm.tags"></el-input>
+</el-form-item>
+<el-form-item>
+  <el-button type="primary" @click="addQuestion()">提交</el-button>
+</el-form-item>
   </el-form>
+  
 </el-card>
     </div>
   </div>
@@ -61,19 +103,28 @@ import {simple} from '@/api/hmmm/subjects.js'
 // 二级目录列表
 import {simple as directorysSimple} from '@/api/hmmm/directorys'
 
-// 方向列表api
-import {direction as directionList} from '@/api/hmmm/constants'
+// 方向列表api // 引入题型api
+import {direction as directionList,
+questionType as questionTypeList} from '@/api/hmmm/constants'
 
 // 引入城市列表
 import {provinces, citys} from '@/api/hmmm/citys'
 
 // 引入企业列表
 import { list as companysList } from '@/api/hmmm/companys'
+
+// 导入难度api
+import {difficulty as difficultyList} from '@/api/hmmm/constants.js'
+
+// 引入发布api
+import { add } from '@/api/hmmm/questions'
 export default {
   name: 'QuestionsNew',
   data() {
     return {
+      selectSingle: '', // 选项
       addForm: {
+        
         number: '', // 试题编号
         subjectID: '', // 学科
         catalogID: '', // 目录
@@ -85,15 +136,32 @@ export default {
         province: '', // 城市
         city: '', // 地区
         direction: '', // 方向
-        options: '', // 选项
+        options: [
+          {code: 'A', title: '', img: '', isRight: false},
+          {code: 'B', title: '', img: '', isRight: false},
+          {code: 'C', title: '', img: '', isRight: false},
+          {code: 'D', title: '', img: '', isRight: false}
+        ],
         answer: '', // 答案解析
         remarks: '', // 题目备注
-        isPerfect: '' // 是否为精选题
+        isPerfect: '', // 是否为精选题
+        videoURL: 'http://www.xxx.com' // 解析视频
       },
       subjectList: [], // 学科列表     
       catalogIDList: [], // 二级目录列表   
       enterpriseIDList: [], // 企业
-      directionList // 方向列表
+      directionList, // 方向列表
+      questionTypeList, // 题型
+           
+      difficultyList // 难度列表
+    }
+  },
+  watch: {
+    selectSingle(newV) {
+      for (var i = 0; i < 4; i++) {
+        this.addForm.options[i].isRight = false
+      }
+      this.addForm.options[newV].isRight = true
     }
   },
   created() {
@@ -123,8 +191,12 @@ export default {
 async getEnterpriseIDList() {
   var result = await companysList()
   this.enterpriseIDList = result.data.items
+},
+async addQuestion() {
+  var result = await add(this.addForm)
+  this.$message.success('新增成功')
+  this.$router.push('/questions/list')
 }
-
   }
 }
 </script>
