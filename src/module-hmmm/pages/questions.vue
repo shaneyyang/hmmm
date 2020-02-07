@@ -8,10 +8,10 @@
   <el-row>
   <el-col>
     <el-button type="primary" size="mini" @click="$router.push('/questions/new')">
-      新增试题
+      {{$t('question.newadd')}}
     </el-button>
     <el-button type="danger" size="mini">
-      批量导入
+      {{$t('question.manyadd')}}
     </el-button>
   </el-col>
 </el-row>
